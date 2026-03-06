@@ -189,24 +189,31 @@ export default function App() {
             <h2>Info-Seite (nur Lesen)</h2>
             <span className="pill">Live-Update: 15s</span>
           </div>
-          <p className="muted">IDs: 2, 4, 5, 11, 12, 30, 32</p>
           <div className="tableWrap">
             <table>
               <thead>
                 <tr>
-                  <th>ID</th>
                   <th>Nachname</th>
                   <th>Vorname</th>
                   <th>Mobil Büro</th>
+                  <th>Abteilungen</th>
                 </tr>
               </thead>
               <tbody>
                 {coworkers.map((r) => (
                   <tr key={r.mitarbeiter_id}>
-                    <td>{r.mitarbeiter_id}</td>
                     <td>{r.nachname}</td>
                     <td>{r.vorname}</td>
                     <td>{r.mobil_buero || ''}</td>
+                    <td>
+                      <div className="tags">
+                        {(r.abteilungen || []).map((dep) => (
+                          <span key={`${r.mitarbeiter_id}-${dep}`} className="tag">
+                            {dep}
+                          </span>
+                        ))}
+                      </div>
+                    </td>
                   </tr>
                 ))}
               </tbody>
