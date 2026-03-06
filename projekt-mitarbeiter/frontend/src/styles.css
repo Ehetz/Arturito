@@ -107,6 +107,11 @@ button.danger:hover {
   font-weight: 600;
 }
 
+.success {
+  color: #166534;
+  font-weight: 600;
+}
+
 .tableHead {
   display: flex;
   justify-content: space-between;

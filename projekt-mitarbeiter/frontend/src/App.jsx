@@ -18,12 +18,16 @@ export default function App() {
   const [error, setError] = useState('');
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState('');
 
   const load = async () => {
     setLoading(true);
     try {
       const r = await fetch('/api/mitarbeiter');
-      setRows(await r.json());
+      const data = await r.json();
+      setRows(data);
+    } catch (_e) {
+      setError('Daten konnten nicht geladen werden');
     } finally {
       setLoading(false);
     }
@@ -65,6 +69,7 @@ export default function App() {
   const submit = async (e) => {
     e.preventDefault();
     setError('');
+    setSuccess('');
     const method = editingId ? 'PUT' : 'POST';
     const url = editingId ? `/api/mitarbeiter/${editingId}` : '/api/mitarbeiter';
 
@@ -82,6 +87,8 @@ export default function App() {
 
     setForm(emptyForm);
     setEditingId(null);
+    setSearch('');
+    setSuccess(editingId ? 'Mitarbeiter erfolgreich aktualisiert.' : 'Mitarbeiter erfolgreich angelegt.');
     await load();
   };
 
@@ -143,6 +150,7 @@ export default function App() {
           <input name="abteilungenText" placeholder="Abteilungen (kommagetrennt)" value={form.abteilungenText} onChange={onChange} />
         </div>
         {error && <p className="error">{error}</p>}
+        {success && <p className="success">{success}</p>}
         <div className="actions">
           <button type="submit">{editingId ? 'Speichern' : 'Anlegen'}</button>
           {editingId && (
