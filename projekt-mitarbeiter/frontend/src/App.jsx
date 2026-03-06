@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 const emptyForm = {
   vorname: '',
@@ -16,13 +16,22 @@ export default function App() {
   const [form, setForm] = useState(emptyForm);
   const [editingId, setEditingId] = useState(null);
   const [error, setError] = useState('');
+  const [search, setSearch] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const load = async () => {
-    const r = await fetch('/api/mitarbeiter');
-    setRows(await r.json());
+    setLoading(true);
+    try {
+      const r = await fetch('/api/mitarbeiter');
+      setRows(await r.json());
+    } finally {
+      setLoading(false);
+    }
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+  }, []);
 
   const onChange = (e) => setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
 
@@ -33,6 +42,25 @@ export default function App() {
       .map((x) => x.trim())
       .filter(Boolean)
   });
+
+  const filteredRows = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return rows;
+
+    return rows.filter((r) => {
+      const searchable = [
+        String(r.mitarbeiter_id),
+        r.vorname,
+        r.nachname,
+        r.mobil_privat,
+        r.email_privat,
+        ...(r.abteilungen || [])
+      ]
+        .join(' ')
+        .toLowerCase();
+      return searchable.includes(q);
+    });
+  }, [rows, search]);
 
   const submit = async (e) => {
     e.preventDefault();
@@ -59,7 +87,12 @@ export default function App() {
 
   const remove = async (id) => {
     if (!confirm('Wirklich löschen?')) return;
-    await fetch(`/api/mitarbeiter/${id}`, { method: 'DELETE' });
+    const r = await fetch(`/api/mitarbeiter/${id}`, { method: 'DELETE' });
+    if (!r.ok) {
+      const data = await r.json();
+      setError(data.error || 'Löschen fehlgeschlagen');
+      return;
+    }
     await load();
   };
 
@@ -78,9 +111,24 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const resetForm = () => {
+    setEditingId(null);
+    setForm(emptyForm);
+    setError('');
+  };
+
   return (
     <div className="wrap">
-      <h1>Mitarbeiter-Datenbank</h1>
+      <header className="topbar">
+        <div>
+          <h1>Mitarbeiter-Datenbank</h1>
+          <p className="muted">3NF · Deutsch · CRUD für Personaldaten</p>
+        </div>
+        <div className="stats">
+          <span className="pill">Gesamt: {rows.length}</span>
+          <span className="pill">Gefiltert: {filteredRows.length}</span>
+        </div>
+      </header>
 
       <form className="card" onSubmit={submit}>
         <h2>{editingId ? 'Mitarbeiter bearbeiten' : 'Mitarbeiter hinzufügen'}</h2>
@@ -97,36 +145,72 @@ export default function App() {
         {error && <p className="error">{error}</p>}
         <div className="actions">
           <button type="submit">{editingId ? 'Speichern' : 'Anlegen'}</button>
-          {editingId && <button type="button" onClick={() => { setEditingId(null); setForm(emptyForm); }}>Abbrechen</button>}
+          {editingId && (
+            <button type="button" className="ghost" onClick={resetForm}>
+              Abbrechen
+            </button>
+          )}
         </div>
       </form>
 
       <div className="card">
-        <h2>Übersicht</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th><th>Nachname</th><th>Vorname</th><th>Geburtstag</th><th>Mobil privat</th><th>Email privat</th><th>Abteilungen</th><th>Aktionen</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((r) => (
-              <tr key={r.mitarbeiter_id}>
-                <td>{r.mitarbeiter_id}</td>
-                <td>{r.nachname}</td>
-                <td>{r.vorname}</td>
-                <td>{r.geburtstag}</td>
-                <td>{r.mobil_privat}</td>
-                <td>{r.email_privat}</td>
-                <td>{(r.abteilungen || []).join(', ')}</td>
-                <td>
-                  <button onClick={() => edit(r)}>Bearbeiten</button>
-                  <button onClick={() => remove(r.mitarbeiter_id)}>Löschen</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <div className="tableHead">
+          <h2>Übersicht</h2>
+          <input
+            className="search"
+            placeholder="Suche (Name, ID, Abteilung, Mail...)"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+
+        {loading ? (
+          <p className="muted">Lade Daten ...</p>
+        ) : (
+          <div className="tableWrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nachname</th>
+                  <th>Vorname</th>
+                  <th>Geburtstag</th>
+                  <th>Mobil privat</th>
+                  <th>Email privat</th>
+                  <th>Abteilungen</th>
+                  <th>Aktionen</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredRows.map((r) => (
+                  <tr key={r.mitarbeiter_id}>
+                    <td>{r.mitarbeiter_id}</td>
+                    <td>{r.nachname}</td>
+                    <td>{r.vorname}</td>
+                    <td>{r.geburtstag}</td>
+                    <td>{r.mobil_privat}</td>
+                    <td>{r.email_privat}</td>
+                    <td>
+                      <div className="tags">
+                        {(r.abteilungen || []).map((dep) => (
+                          <span key={`${r.mitarbeiter_id}-${dep}`} className="tag">
+                            {dep}
+                          </span>
+                        ))}
+                      </div>
+                    </td>
+                    <td>
+                      <button onClick={() => edit(r)}>Bearbeiten</button>
+                      <button className="danger" onClick={() => remove(r.mitarbeiter_id)}>
+                        Löschen
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );

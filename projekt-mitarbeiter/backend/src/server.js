@@ -12,14 +12,34 @@ app.use(express.json());
 const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
 
 const requiredFields = ['vorname', 'nachname', 'geburtstag', 'mobil_privat', 'email_privat'];
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function isValidDateParts(day, month, year) {
+  const d = Number(day);
+  const m = Number(month);
+  const y = Number(year);
+  const date = new Date(y, m - 1, d);
+  return date.getFullYear() === y && date.getMonth() === m - 1 && date.getDate() === d;
+}
 
 function validatePayload(body) {
   for (const f of requiredFields) {
     if (!body[f] || String(body[f]).trim() === '') return `Pflichtfeld fehlt: ${f}`;
   }
+
   if (!/^\d{2}\.\d{2}\.\d{4}$/.test(body.geburtstag)) {
     return 'Geburtstag muss Format DD.MM.YYYY haben';
   }
+
+  const [day, month, year] = body.geburtstag.split('.');
+  if (!isValidDateParts(day, month, year)) {
+    return 'Geburtstag ist kein gültiges Datum';
+  }
+
+  if (!emailRegex.test(body.email_privat)) {
+    return 'Email privat ist ungültig';
+  }
+
   return null;
 }
 
@@ -28,8 +48,21 @@ function toIsoDate(ddmmyyyy) {
   return `${y}-${m}-${d}`;
 }
 
+function normalizeAbteilungen(list = []) {
+  return [...new Set(list.map((x) => String(x).trim()).filter(Boolean))];
+}
+
 async function upsertKontakt(client, mitarbeiterId, code, wert) {
-  if (!wert) return;
+  if (wert === undefined || wert === null || String(wert).trim() === '') {
+    await client.query(
+      `DELETE FROM mitarbeiter_kontakt
+       WHERE mitarbeiter_id = $1
+       AND kontakt_typ_id = (SELECT kontakt_typ_id FROM kontakt_typ WHERE code = $2)`,
+      [mitarbeiterId, code]
+    );
+    return;
+  }
+
   await client.query(
     `INSERT INTO mitarbeiter_kontakt (mitarbeiter_id, kontakt_typ_id, wert)
      SELECT $1, kt.kontakt_typ_id, $3
@@ -37,9 +70,14 @@ async function upsertKontakt(client, mitarbeiterId, code, wert) {
      WHERE kt.code = $2
      ON CONFLICT (mitarbeiter_id, kontakt_typ_id)
      DO UPDATE SET wert = EXCLUDED.wert`,
-    [mitarbeiterId, code, wert]
+    [mitarbeiterId, code, String(wert).trim()]
   );
 }
+
+app.get('/api/health', async (_req, res) => {
+  await pool.query('SELECT 1');
+  res.json({ ok: true });
+});
 
 app.get('/api/abteilungen', async (_req, res) => {
   const r = await pool.query('SELECT abteilung_id, name FROM abteilung ORDER BY name');
@@ -47,7 +85,7 @@ app.get('/api/abteilungen', async (_req, res) => {
 });
 
 app.post('/api/abteilungen', async (req, res) => {
-  const { name } = req.body;
+  const name = String(req.body?.name || '').trim();
   if (!name) return res.status(400).json({ error: 'Name fehlt' });
   const r = await pool.query(
     'INSERT INTO abteilung (name) VALUES ($1) ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name RETURNING *',
@@ -91,7 +129,7 @@ app.post('/api/mitarbeiter', async (req, res) => {
     await client.query('BEGIN');
     const m = await client.query(
       'INSERT INTO mitarbeiter (vorname, nachname, geburtstag) VALUES ($1, $2, $3) RETURNING mitarbeiter_id',
-      [vorname, nachname, toIsoDate(geburtstag)]
+      [String(vorname).trim(), String(nachname).trim(), toIsoDate(geburtstag)]
     );
     const id = m.rows[0].mitarbeiter_id;
 
@@ -100,7 +138,7 @@ app.post('/api/mitarbeiter', async (req, res) => {
     await upsertKontakt(client, id, 'mobil_privat', mobil_privat);
     await upsertKontakt(client, id, 'email_privat', email_privat);
 
-    for (const depName of abteilungen) {
+    for (const depName of normalizeAbteilungen(abteilungen)) {
       const dep = await client.query(
         'INSERT INTO abteilung (name) VALUES ($1) ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name RETURNING abteilung_id',
         [depName]
@@ -123,6 +161,8 @@ app.post('/api/mitarbeiter', async (req, res) => {
 
 app.put('/api/mitarbeiter/:id', async (req, res) => {
   const id = Number(req.params.id);
+  if (!Number.isInteger(id) || id < 1) return res.status(400).json({ error: 'Ungültige ID' });
+
   const error = validatePayload(req.body);
   if (error) return res.status(400).json({ error });
 
@@ -135,10 +175,15 @@ app.put('/api/mitarbeiter/:id', async (req, res) => {
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
-    await client.query(
-      'UPDATE mitarbeiter SET vorname=$1, nachname=$2, geburtstag=$3 WHERE mitarbeiter_id=$4',
-      [vorname, nachname, toIsoDate(geburtstag), id]
+    const updated = await client.query(
+      'UPDATE mitarbeiter SET vorname=$1, nachname=$2, geburtstag=$3 WHERE mitarbeiter_id=$4 RETURNING mitarbeiter_id',
+      [String(vorname).trim(), String(nachname).trim(), toIsoDate(geburtstag), id]
     );
+
+    if (updated.rowCount === 0) {
+      await client.query('ROLLBACK');
+      return res.status(404).json({ error: 'Mitarbeiter nicht gefunden' });
+    }
 
     await upsertKontakt(client, id, 'telefon_buero', telefon_buero);
     await upsertKontakt(client, id, 'mobil_buero', mobil_buero);
@@ -146,7 +191,7 @@ app.put('/api/mitarbeiter/:id', async (req, res) => {
     await upsertKontakt(client, id, 'email_privat', email_privat);
 
     await client.query('DELETE FROM mitarbeiter_abteilung WHERE mitarbeiter_id=$1', [id]);
-    for (const depName of abteilungen) {
+    for (const depName of normalizeAbteilungen(abteilungen)) {
       const dep = await client.query(
         'INSERT INTO abteilung (name) VALUES ($1) ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name RETURNING abteilung_id',
         [depName]
@@ -169,7 +214,9 @@ app.put('/api/mitarbeiter/:id', async (req, res) => {
 
 app.delete('/api/mitarbeiter/:id', async (req, res) => {
   const id = Number(req.params.id);
-  await pool.query('DELETE FROM mitarbeiter WHERE mitarbeiter_id=$1', [id]);
+  if (!Number.isInteger(id) || id < 1) return res.status(400).json({ error: 'Ungültige ID' });
+  const r = await pool.query('DELETE FROM mitarbeiter WHERE mitarbeiter_id=$1', [id]);
+  if (r.rowCount === 0) return res.status(404).json({ error: 'Mitarbeiter nicht gefunden' });
   res.json({ ok: true });
 });
 
