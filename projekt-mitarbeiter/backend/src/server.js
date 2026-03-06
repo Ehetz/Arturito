@@ -127,9 +127,31 @@ app.post('/api/mitarbeiter', async (req, res) => {
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
+
+    // Requirement: free IDs should be reused after deletion.
+    // Lock table during ID allocation to avoid duplicate assignment in concurrent inserts.
+    await client.query('LOCK TABLE mitarbeiter IN EXCLUSIVE MODE');
+    const nextIdRes = await client.query(`
+      SELECT COALESCE(
+        (
+          SELECT gs
+          FROM generate_series(
+            1,
+            COALESCE((SELECT MAX(mitarbeiter_id) FROM mitarbeiter), 0) + 1
+          ) AS gs
+          EXCEPT
+          SELECT mitarbeiter_id FROM mitarbeiter
+          ORDER BY gs
+          LIMIT 1
+        ),
+        1
+      ) AS next_id
+    `);
+    const nextId = Number(nextIdRes.rows[0].next_id);
+
     const m = await client.query(
-      'INSERT INTO mitarbeiter (vorname, nachname, geburtstag) VALUES ($1, $2, $3) RETURNING mitarbeiter_id',
-      [String(vorname).trim(), String(nachname).trim(), toIsoDate(geburtstag)]
+      'INSERT INTO mitarbeiter (mitarbeiter_id, vorname, nachname, geburtstag) VALUES ($1, $2, $3, $4) RETURNING mitarbeiter_id',
+      [nextId, String(vorname).trim(), String(nachname).trim(), toIsoDate(geburtstag)]
     );
     const id = m.rows[0].mitarbeiter_id;
 
