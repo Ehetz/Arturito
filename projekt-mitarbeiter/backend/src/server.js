@@ -94,23 +94,38 @@ app.post('/api/abteilungen', async (req, res) => {
   res.json(r.rows[0]);
 });
 
-app.get('/api/mitarbeiter', async (_req, res) => {
-  const r = await pool.query(`
-    SELECT m.mitarbeiter_id, m.vorname, m.nachname,
-           to_char(m.geburtstag, 'DD.MM.YYYY') AS geburtstag,
-           MAX(CASE WHEN kt.code='telefon_buero' THEN mk.wert END) AS telefon_buero,
-           MAX(CASE WHEN kt.code='mobil_buero' THEN mk.wert END) AS mobil_buero,
-           MAX(CASE WHEN kt.code='mobil_privat' THEN mk.wert END) AS mobil_privat,
-           MAX(CASE WHEN kt.code='email_privat' THEN mk.wert END) AS email_privat,
-           COALESCE(array_agg(DISTINCT a.name) FILTER (WHERE a.name IS NOT NULL), '{}') AS abteilungen
-    FROM mitarbeiter m
-    LEFT JOIN mitarbeiter_kontakt mk ON mk.mitarbeiter_id = m.mitarbeiter_id
-    LEFT JOIN kontakt_typ kt ON kt.kontakt_typ_id = mk.kontakt_typ_id
-    LEFT JOIN mitarbeiter_abteilung ma ON ma.mitarbeiter_id = m.mitarbeiter_id
-    LEFT JOIN abteilung a ON a.abteilung_id = ma.abteilung_id
-    GROUP BY m.mitarbeiter_id
-    ORDER BY m.nachname, m.vorname
-  `);
+app.get('/api/mitarbeiter', async (req, res) => {
+  const idsRaw = String(req.query.ids || '').trim();
+  let ids = [];
+  if (idsRaw) {
+    ids = idsRaw
+      .split(',')
+      .map((x) => Number(String(x).trim()))
+      .filter((x) => Number.isInteger(x) && x > 0);
+  }
+
+  const whereClause = ids.length ? 'WHERE m.mitarbeiter_id = ANY($1::int[])' : '';
+  const params = ids.length ? [ids] : [];
+
+  const r = await pool.query(
+    `SELECT m.mitarbeiter_id, m.vorname, m.nachname,
+            to_char(m.geburtstag, 'DD.MM.YYYY') AS geburtstag,
+            MAX(CASE WHEN kt.code='telefon_buero' THEN mk.wert END) AS telefon_buero,
+            MAX(CASE WHEN kt.code='mobil_buero' THEN mk.wert END) AS mobil_buero,
+            MAX(CASE WHEN kt.code='mobil_privat' THEN mk.wert END) AS mobil_privat,
+            MAX(CASE WHEN kt.code='email_privat' THEN mk.wert END) AS email_privat,
+            COALESCE(array_agg(DISTINCT a.name) FILTER (WHERE a.name IS NOT NULL), '{}') AS abteilungen
+     FROM mitarbeiter m
+     LEFT JOIN mitarbeiter_kontakt mk ON mk.mitarbeiter_id = m.mitarbeiter_id
+     LEFT JOIN kontakt_typ kt ON kt.kontakt_typ_id = mk.kontakt_typ_id
+     LEFT JOIN mitarbeiter_abteilung ma ON ma.mitarbeiter_id = m.mitarbeiter_id
+     LEFT JOIN abteilung a ON a.abteilung_id = ma.abteilung_id
+     ${whereClause}
+     GROUP BY m.mitarbeiter_id
+     ORDER BY m.mitarbeiter_id`,
+    params
+  );
+
   res.json(r.rows);
 });
 

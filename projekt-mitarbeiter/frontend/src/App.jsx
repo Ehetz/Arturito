@@ -21,6 +21,10 @@ export default function App() {
   const [success, setSuccess] = useState('');
   const [sortBy, setSortBy] = useState('id');
   const [sortDir, setSortDir] = useState('asc');
+  const [view, setView] = useState('verwaltung');
+  const [coworkers, setCoworkers] = useState([]);
+
+  const coworkerIds = [2, 4, 5, 11, 12, 30, 32];
 
   const load = async () => {
     setLoading(true);
@@ -35,9 +39,28 @@ export default function App() {
     }
   };
 
+  const loadCoworkers = async () => {
+    try {
+      const r = await fetch(`/api/mitarbeiter?ids=${coworkerIds.join(',')}`);
+      const data = await r.json();
+      const order = new Map(coworkerIds.map((id, idx) => [id, idx]));
+      data.sort((a, b) => (order.get(a.mitarbeiter_id) ?? 999) - (order.get(b.mitarbeiter_id) ?? 999));
+      setCoworkers(data);
+    } catch (_e) {
+      setError('Info-Seite konnte nicht geladen werden');
+    }
+  };
+
   useEffect(() => {
     load();
+    loadCoworkers();
   }, []);
+
+  useEffect(() => {
+    if (view !== 'info') return;
+    const t = setInterval(loadCoworkers, 15000);
+    return () => clearInterval(t);
+  }, [view]);
 
   const onChange = (e) => setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
 
@@ -151,10 +174,51 @@ export default function App() {
           <p className="muted">3NF · Deutsch · CRUD für Personaldaten</p>
         </div>
         <div className="stats">
-          <span className="pill">Gesamt: {rows.length}</span>
-          <span className="pill">Gefiltert: {filteredRows.length}</span>
+          <button className={view === 'verwaltung' ? '' : 'ghost'} onClick={() => setView('verwaltung')}>
+            Verwaltung
+          </button>
+          <button className={view === 'info' ? '' : 'ghost'} onClick={() => setView('info')}>
+            Info-Seite
+          </button>
         </div>
       </header>
+
+      {view === 'info' ? (
+        <div className="card">
+          <div className="tableHead">
+            <h2>Info-Seite (nur Lesen)</h2>
+            <span className="pill">Live-Update: 15s</span>
+          </div>
+          <p className="muted">IDs: 2, 4, 5, 11, 12, 30, 32</p>
+          <div className="tableWrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nachname</th>
+                  <th>Vorname</th>
+                  <th>Mobil Büro</th>
+                </tr>
+              </thead>
+              <tbody>
+                {coworkers.map((r) => (
+                  <tr key={r.mitarbeiter_id}>
+                    <td>{r.mitarbeiter_id}</td>
+                    <td>{r.nachname}</td>
+                    <td>{r.vorname}</td>
+                    <td>{r.mobil_buero || ''}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      ) : (
+      <>
+      <div className="stats" style={{ marginBottom: '10px' }}>
+        <span className="pill">Gesamt: {rows.length}</span>
+        <span className="pill">Gefiltert: {filteredRows.length}</span>
+      </div>
 
       <form className="card" onSubmit={submit}>
         <h2>{editingId ? 'Mitarbeiter bearbeiten' : 'Mitarbeiter hinzufügen'}</h2>
@@ -251,6 +315,8 @@ export default function App() {
           </div>
         )}
       </div>
+      </>
+      )}
     </div>
   );
 }
