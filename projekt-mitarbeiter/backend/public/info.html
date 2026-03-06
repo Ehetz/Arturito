@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mitarbeiter Info</title>
+    <style>
+      body { font-family: Inter, Arial, sans-serif; background:#f1f5f9; margin:0; }
+      .wrap { max-width: 1100px; margin: 24px auto; padding: 0 16px; }
+      .card { background:#fff; border-radius:12px; box-shadow:0 4px 16px rgba(15,23,42,.08); padding:16px; }
+      h1 { margin:0 0 6px; }
+      .muted { color:#64748b; margin:0 0 16px; }
+      table { width:100%; border-collapse: collapse; }
+      th, td { text-align:left; border-bottom:1px solid #e2e8f0; padding:10px 8px; }
+      .tags { display:flex; gap:6px; flex-wrap:wrap; }
+      .tag { background:#e2e8f0; border-radius:999px; padding:2px 8px; font-size:12px; }
+      .status { margin-top:12px; color:#166534; font-size:13px; }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="card">
+        <h1>Mitarbeiter Info</h1>
+        <p class="muted">Nur Anzeige · automatisch synchron mit Datenbank</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Nachname</th>
+              <th>Vorname</th>
+              <th>Mobil Büro</th>
+              <th>Abteilungen</th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+        <div class="status" id="status">Verbunden</div>
+      </div>
+    </div>
+    <script type="module" src="/public-info-assets/info.js"></script>
+  </body>
+</html>

@@ -2,6 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import pg from 'pg';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 dotenv.config();
 
@@ -10,6 +12,12 @@ app.use(cors());
 app.use(express.json());
 
 const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const publicDir = path.join(__dirname, '..', 'public');
+
+const coworkerIds = [2, 4, 5, 11, 12, 30, 32];
+const sseClients = new Set();
 
 const requiredFields = ['vorname', 'nachname', 'geburtstag', 'mobil_privat', 'email_privat'];
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -52,6 +60,23 @@ function normalizeAbteilungen(list = []) {
   return [...new Set(list.map((x) => String(x).trim()).filter(Boolean))];
 }
 
+function broadcastDbChange() {
+  const payload = `data: ${JSON.stringify({ type: 'db-updated', ts: Date.now() })}\n\n`;
+  for (const res of sseClients) {
+    res.write(payload);
+  }
+}
+
+async function setupDbNotifyListener() {
+  const client = new pg.Client({ connectionString: process.env.DATABASE_URL });
+  await client.connect();
+  await client.query('LISTEN mitarbeiter_changed');
+  client.on('notification', () => broadcastDbChange());
+  client.on('error', (err) => {
+    console.error('LISTEN error:', err.message);
+  });
+}
+
 async function upsertKontakt(client, mitarbeiterId, code, wert) {
   if (wert === undefined || wert === null || String(wert).trim() === '') {
     await client.query(
@@ -73,6 +98,49 @@ async function upsertKontakt(client, mitarbeiterId, code, wert) {
     [mitarbeiterId, code, String(wert).trim()]
   );
 }
+
+app.use('/public-info-assets', express.static(publicDir));
+
+app.get('/public-info', (_req, res) => {
+  res.sendFile(path.join(publicDir, 'info.html'));
+});
+
+app.get('/api/mitarbeiter/public-info', async (_req, res) => {
+  const r = await pool.query(
+    `SELECT m.mitarbeiter_id, m.vorname, m.nachname,
+            MAX(CASE WHEN kt.code='mobil_buero' THEN mk.wert END) AS mobil_buero,
+            COALESCE(array_agg(DISTINCT a.name) FILTER (WHERE a.name IS NOT NULL), '{}') AS abteilungen
+     FROM mitarbeiter m
+     LEFT JOIN mitarbeiter_kontakt mk ON mk.mitarbeiter_id = m.mitarbeiter_id
+     LEFT JOIN kontakt_typ kt ON kt.kontakt_typ_id = mk.kontakt_typ_id
+     LEFT JOIN mitarbeiter_abteilung ma ON ma.mitarbeiter_id = m.mitarbeiter_id
+     LEFT JOIN abteilung a ON a.abteilung_id = ma.abteilung_id
+     WHERE m.mitarbeiter_id = ANY($1::int[])
+     GROUP BY m.mitarbeiter_id
+     ORDER BY m.nachname, m.vorname`,
+    [coworkerIds]
+  );
+  res.json(r.rows.map((x) => ({
+    vorname: x.vorname,
+    nachname: x.nachname,
+    mobil_buero: x.mobil_buero,
+    abteilungen: x.abteilungen,
+  })));
+});
+
+app.get('/api/mitarbeiter/stream', (req, res) => {
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+  res.flushHeaders?.();
+
+  res.write(`data: ${JSON.stringify({ type: 'connected', ts: Date.now() })}\n\n`);
+  sseClients.add(res);
+
+  req.on('close', () => {
+    sseClients.delete(res);
+  });
+});
 
 app.get('/api/health', async (_req, res) => {
   await pool.query('SELECT 1');
@@ -187,6 +255,7 @@ app.post('/api/mitarbeiter', async (req, res) => {
     }
 
     await client.query('COMMIT');
+    broadcastDbChange();
     res.status(201).json({ mitarbeiter_id: id });
   } catch (e) {
     await client.query('ROLLBACK');
@@ -240,6 +309,7 @@ app.put('/api/mitarbeiter/:id', async (req, res) => {
     }
 
     await client.query('COMMIT');
+    broadcastDbChange();
     res.json({ ok: true });
   } catch (e) {
     await client.query('ROLLBACK');
@@ -254,10 +324,17 @@ app.delete('/api/mitarbeiter/:id', async (req, res) => {
   if (!Number.isInteger(id) || id < 1) return res.status(400).json({ error: 'Ungültige ID' });
   const r = await pool.query('DELETE FROM mitarbeiter WHERE mitarbeiter_id=$1', [id]);
   if (r.rowCount === 0) return res.status(404).json({ error: 'Mitarbeiter nicht gefunden' });
+  broadcastDbChange();
   res.json({ ok: true });
 });
 
 const port = process.env.PORT || 4000;
-app.listen(port, () => {
+app.listen(port, async () => {
   console.log(`Backend läuft auf Port ${port}`);
+  try {
+    await setupDbNotifyListener();
+    console.log('DB LISTEN aktiv: mitarbeiter_changed');
+  } catch (err) {
+    console.error('DB LISTEN setup fehlgeschlagen:', err.message);
+  }
 });
