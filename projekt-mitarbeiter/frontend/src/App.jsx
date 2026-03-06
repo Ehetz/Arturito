@@ -19,6 +19,8 @@ export default function App() {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState('');
+  const [sortBy, setSortBy] = useState('id');
+  const [sortDir, setSortDir] = useState('asc');
 
   const load = async () => {
     setLoading(true);
@@ -49,22 +51,39 @@ export default function App() {
 
   const filteredRows = useMemo(() => {
     const q = search.trim().toLowerCase();
-    if (!q) return rows;
+    const base = !q
+      ? rows
+      : rows.filter((r) => {
+          const searchable = [
+            String(r.mitarbeiter_id),
+            r.vorname,
+            r.nachname,
+            r.mobil_privat,
+            r.email_privat,
+            ...(r.abteilungen || [])
+          ]
+            .join(' ')
+            .toLowerCase();
+          return searchable.includes(q);
+        });
 
-    return rows.filter((r) => {
-      const searchable = [
-        String(r.mitarbeiter_id),
-        r.vorname,
-        r.nachname,
-        r.mobil_privat,
-        r.email_privat,
-        ...(r.abteilungen || [])
-      ]
-        .join(' ')
-        .toLowerCase();
-      return searchable.includes(q);
+    const dir = sortDir === 'asc' ? 1 : -1;
+    const sorted = [...base].sort((a, b) => {
+      if (sortBy === 'id') return (a.mitarbeiter_id - b.mitarbeiter_id) * dir;
+      if (sortBy === 'nachname') return a.nachname.localeCompare(b.nachname, 'de') * dir;
+      if (sortBy === 'vorname') return a.vorname.localeCompare(b.vorname, 'de') * dir;
+      if (sortBy === 'geburtstag') {
+        const [da, ma, ya] = String(a.geburtstag || '').split('.');
+        const [db, mb, yb] = String(b.geburtstag || '').split('.');
+        const ta = new Date(`${ya}-${ma}-${da}`).getTime() || 0;
+        const tb = new Date(`${yb}-${mb}-${db}`).getTime() || 0;
+        return (ta - tb) * dir;
+      }
+      return 0;
     });
-  }, [rows, search]);
+
+    return sorted;
+  }, [rows, search, sortBy, sortDir]);
 
   const submit = async (e) => {
     e.preventDefault();
@@ -164,12 +183,24 @@ export default function App() {
       <div className="card">
         <div className="tableHead">
           <h2>Übersicht</h2>
-          <input
-            className="search"
-            placeholder="Suche (Name, ID, Abteilung, Mail...)"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+          <div className="toolbar">
+            <input
+              className="search"
+              placeholder="Suche (Name, ID, Abteilung, Mail...)"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+              <option value="id">Sortieren: ID</option>
+              <option value="nachname">Sortieren: Nachname</option>
+              <option value="vorname">Sortieren: Vorname</option>
+              <option value="geburtstag">Sortieren: Geburtstag</option>
+            </select>
+            <select value={sortDir} onChange={(e) => setSortDir(e.target.value)}>
+              <option value="asc">Aufsteigend (A-Z / 1-9)</option>
+              <option value="desc">Absteigend (Z-A / 9-1)</option>
+            </select>
+          </div>
         </div>
 
         {loading ? (
