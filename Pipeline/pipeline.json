@@ -292,13 +292,13 @@
       "description": "Define and operationalize a worker agent for parallel execution.",
       "importance": 1,
       "critical": false,
-      "status": "active",
+      "status": "completed",
       "tags": [],
       "createdAt": "2026-03-08T13:42:52Z",
-      "updatedAt": "2026-03-08T13:43:07Z",
-      "lastUpdated": "2026-03-08T13:43:07Z",
+      "updatedAt": "2026-03-08T15:48:16Z",
+      "lastUpdated": "2026-03-08T15:48:16Z",
       "currentStep": "stp_7317fec5",
-      "blockedReason": "Persistent sub-agent sessions require thread support in current channel. Use one-shot subagents here; enable thread-capable channel for persistent worker.",
+      "blockedReason": "",
       "steps": [
         {
           "id": "stp_25f181a4",
@@ -331,10 +331,10 @@
           "id": "stp_7317fec5",
           "title": "Document activation path for channels that support persistent worker sessions",
           "description": "",
-          "status": "doing",
+          "status": "done",
           "createdAt": "2026-03-08T13:42:57Z",
-          "updatedAt": "2026-03-08T13:43:07Z",
-          "lastUpdated": "2026-03-08T13:43:07Z"
+          "updatedAt": "2026-03-08T15:48:16Z",
+          "lastUpdated": "2026-03-08T15:48:16Z"
         }
       ]
     }
