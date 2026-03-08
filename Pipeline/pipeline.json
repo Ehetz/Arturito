@@ -139,9 +139,9 @@
       "status": "active",
       "tags": [],
       "createdAt": "2026-03-08T13:01:03Z",
-      "updatedAt": "2026-03-08T18:18:26Z",
-      "lastUpdated": "2026-03-08T18:18:26Z",
-      "currentStep": "stp_04bd64ea",
+      "updatedAt": "2026-03-08T18:48:49Z",
+      "lastUpdated": "2026-03-08T18:48:49Z",
+      "currentStep": "stp_2d00392e",
       "blockedReason": "",
       "steps": [
         {
@@ -157,19 +157,19 @@
           "id": "stp_04bd64ea",
           "title": "Implement pull sync from GitHub to pipeline",
           "description": "",
-          "status": "doing",
+          "status": "done",
           "createdAt": "2026-03-08T13:01:03Z",
-          "updatedAt": "2026-03-08T18:18:26Z",
-          "lastUpdated": "2026-03-08T18:18:26Z"
+          "updatedAt": "2026-03-08T18:48:49Z",
+          "lastUpdated": "2026-03-08T18:48:49Z"
         },
         {
           "id": "stp_2d00392e",
           "title": "Implement push sync from pipeline status to GitHub comments",
           "description": "",
-          "status": "todo",
+          "status": "doing",
           "createdAt": "2026-03-08T13:01:03Z",
-          "updatedAt": "2026-03-08T13:01:03Z",
-          "lastUpdated": "2026-03-08T13:01:03Z"
+          "updatedAt": "2026-03-08T18:48:49Z",
+          "lastUpdated": "2026-03-08T18:48:49Z"
         },
         {
           "id": "stp_91cf2895",
