@@ -5,6 +5,7 @@ const detailsEl = document.getElementById('details');
 const refreshBtn = document.getElementById('refreshBtn');
 const createProjectForm = document.getElementById('createProjectForm');
 const addStepForm = document.getElementById('addStepForm');
+const filterForm = document.getElementById('filterForm');
 
 let projects = [];
 let selectedId = null;
@@ -24,12 +25,27 @@ async function fetchProjects() {
   renderDetails();
 }
 
+function getFilteredProjects() {
+  const form = new FormData(filterForm);
+  const status = String(form.get('status') || '');
+  const importanceMax = Number(form.get('importanceMax') || 0);
+  const criticalOnly = form.get('criticalOnly') === 'on';
+
+  return projects.filter((p) => {
+    if (status && p.status !== status) return false;
+    if (importanceMax && Number(p.importance) > importanceMax) return false;
+    if (criticalOnly && !p.critical) return false;
+    return true;
+  });
+}
+
 function renderProjects() {
-  if (!projects.length) {
-    projectListEl.innerHTML = '<li class="meta">No projects yet.</li>';
+  const visible = getFilteredProjects();
+  if (!visible.length) {
+    projectListEl.innerHTML = '<li class="meta">No projects for current filters.</li>';
     return;
   }
-  projectListEl.innerHTML = projects.map((p) => `
+  projectListEl.innerHTML = visible.map((p) => `
     <li class="card ${p.id === selectedId ? 'active' : ''}" data-id="${p.id}">
       <div class="name">${esc(p.name)} ${p.critical ? '<span class="badge critical">CRITICAL</span>' : ''}</div>
       <div class="meta">importance=${p.importance} · status=${esc(p.status)}</div>
@@ -101,6 +117,11 @@ createProjectForm.addEventListener('submit', async (e) => {
   }
   createProjectForm.reset();
   await fetchProjects();
+});
+
+filterForm.addEventListener('change', () => {
+  renderProjects();
+  renderDetails();
 });
 
 addStepForm.addEventListener('submit', async (e) => {

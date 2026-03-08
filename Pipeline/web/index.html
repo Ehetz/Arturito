@@ -31,6 +31,32 @@
           </label>
           <button type="submit">Add project</button>
         </form>
+        <form id="filterForm" class="panel">
+          <h3>Filters</h3>
+          <label>
+            Status
+            <select name="status">
+              <option value="">all</option>
+              <option value="active">active</option>
+              <option value="paused">paused</option>
+              <option value="blocked">blocked</option>
+              <option value="completed">completed</option>
+              <option value="maintenance">maintenance</option>
+            </select>
+          </label>
+          <label>
+            Importance ≤
+            <select name="importanceMax">
+              <option value="">any</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+          </label>
+          <label><input type="checkbox" name="criticalOnly" /> Critical only</label>
+        </form>
         <ul id="projectList"></ul>
       </aside>
 

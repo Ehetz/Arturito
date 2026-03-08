@@ -35,9 +35,9 @@
       "status": "active",
       "tags": [],
       "createdAt": "2026-03-08T13:01:02Z",
-      "updatedAt": "2026-03-08T16:48:48Z",
-      "lastUpdated": "2026-03-08T16:48:48Z",
-      "currentStep": "stp_07ee6e8b",
+      "updatedAt": "2026-03-08T17:18:44Z",
+      "lastUpdated": "2026-03-08T17:18:44Z",
+      "currentStep": "stp_845a2213",
       "blockedReason": "",
       "steps": [
         {
@@ -62,19 +62,19 @@
           "id": "stp_07ee6e8b",
           "title": "Add filters by status/importance/critical",
           "description": "",
-          "status": "doing",
+          "status": "done",
           "createdAt": "2026-03-08T13:01:02Z",
-          "updatedAt": "2026-03-08T16:48:48Z",
-          "lastUpdated": "2026-03-08T16:48:48Z"
+          "updatedAt": "2026-03-08T17:18:44Z",
+          "lastUpdated": "2026-03-08T17:18:44Z"
         },
         {
           "id": "stp_845a2213",
           "title": "Add quick action buttons: mark critical, set status, set current step",
           "description": "",
-          "status": "todo",
+          "status": "doing",
           "createdAt": "2026-03-08T13:01:02Z",
-          "updatedAt": "2026-03-08T13:01:02Z",
-          "lastUpdated": "2026-03-08T13:01:02Z"
+          "updatedAt": "2026-03-08T17:18:44Z",
+          "lastUpdated": "2026-03-08T17:18:44Z"
         }
       ]
     },
