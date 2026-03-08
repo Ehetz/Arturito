@@ -14,4 +14,4 @@ Purpose: capture candidate profile/memory updates in real time during chats.
   - source: user requested continuous profile capture + daily consolidation workflow
   - target files: `MEMORY.md`, `USER.md`, `IDENTITY.md`
   - proposed update: maintain profile-sync log and run daily consolidation into profile files
-  - status: pending
+  - status: applied
