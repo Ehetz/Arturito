@@ -7,11 +7,11 @@
       "description": "Core data model and CLI",
       "importance": 1,
       "critical": false,
-      "status": "active",
+      "status": "completed",
       "tags": [],
       "createdAt": "2026-03-08T12:32:56Z",
-      "updatedAt": "2026-03-08T12:32:57Z",
-      "lastUpdated": "2026-03-08T12:32:57Z",
+      "updatedAt": "2026-03-08T13:48:31Z",
+      "lastUpdated": "2026-03-08T13:48:31Z",
       "currentStep": "stp_7690b101",
       "blockedReason": "",
       "steps": [
@@ -19,10 +19,10 @@
           "id": "stp_7690b101",
           "title": "Define JSON schema",
           "description": "",
-          "status": "todo",
+          "status": "done",
           "createdAt": "2026-03-08T12:32:57Z",
-          "updatedAt": "2026-03-08T12:32:57Z",
-          "lastUpdated": "2026-03-08T12:32:57Z"
+          "updatedAt": "2026-03-08T13:48:31Z",
+          "lastUpdated": "2026-03-08T13:48:31Z"
         }
       ]
     },
@@ -87,28 +87,28 @@
       "status": "active",
       "tags": [],
       "createdAt": "2026-03-08T13:01:02Z",
-      "updatedAt": "2026-03-08T13:01:02Z",
-      "lastUpdated": "2026-03-08T13:01:02Z",
-      "currentStep": "stp_8dcb6268",
+      "updatedAt": "2026-03-08T13:48:50Z",
+      "lastUpdated": "2026-03-08T13:48:50Z",
+      "currentStep": "stp_897ba524",
       "blockedReason": "",
       "steps": [
         {
           "id": "stp_8dcb6268",
           "title": "Define heartbeat rules based on pipeline signals",
           "description": "",
-          "status": "todo",
+          "status": "done",
           "createdAt": "2026-03-08T13:01:02Z",
-          "updatedAt": "2026-03-08T13:01:02Z",
-          "lastUpdated": "2026-03-08T13:01:02Z"
+          "updatedAt": "2026-03-08T13:48:50Z",
+          "lastUpdated": "2026-03-08T13:48:50Z"
         },
         {
           "id": "stp_897ba524",
           "title": "Implement stale-blocked detection (>24h)",
           "description": "",
-          "status": "todo",
+          "status": "doing",
           "createdAt": "2026-03-08T13:01:02Z",
-          "updatedAt": "2026-03-08T13:01:02Z",
-          "lastUpdated": "2026-03-08T13:01:02Z"
+          "updatedAt": "2026-03-08T13:48:50Z",
+          "lastUpdated": "2026-03-08T13:48:50Z"
         },
         {
           "id": "stp_e345e42f",
