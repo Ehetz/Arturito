@@ -52,8 +52,8 @@ python3 pipeline_cli.py next
 - if there is an `active` critical project with no progress, alert user
 - otherwise: `HEARTBEAT_OK`
 
-## API (new)
-A lightweight local API is now included in `pipeline_api.py`.
+## API
+A lightweight local API is included in `pipeline_api.py`.
 
 Run:
 ```bash
@@ -72,7 +72,18 @@ Endpoints:
 - `PATCH /projects/<project_id>`
 - `PATCH /projects/<project_id>/steps/<step_id>`
 
-This gives a clean backend path for the future web app (project list + click for detail).
+## Web UI (new)
+A minimal frontend is available in `web/` (projects list + details panel on click).
+
+Run:
+```bash
+cd web
+python3 -m http.server 8790 --bind 0.0.0.0
+```
+
+Open:
+- `http://127.0.0.1:8790`
+- or `http://<your-host-ip>:8790`
 
 ## Roadmap
 1. File backend + CLI (done)
