@@ -191,28 +191,28 @@
       "status": "active",
       "tags": [],
       "createdAt": "2026-03-08T13:01:03Z",
-      "updatedAt": "2026-03-08T13:01:03Z",
-      "lastUpdated": "2026-03-08T13:01:03Z",
-      "currentStep": "stp_05ecf8e5",
+      "updatedAt": "2026-03-08T19:48:23Z",
+      "lastUpdated": "2026-03-08T19:48:23Z",
+      "currentStep": "stp_88518b5f",
       "blockedReason": "",
       "steps": [
         {
           "id": "stp_05ecf8e5",
           "title": "Design append-only activity log format",
           "description": "",
-          "status": "todo",
+          "status": "done",
           "createdAt": "2026-03-08T13:01:03Z",
-          "updatedAt": "2026-03-08T13:01:03Z",
-          "lastUpdated": "2026-03-08T13:01:03Z"
+          "updatedAt": "2026-03-08T19:48:23Z",
+          "lastUpdated": "2026-03-08T19:48:23Z"
         },
         {
           "id": "stp_88518b5f",
           "title": "Log all create/update actions (project/step)",
           "description": "",
-          "status": "todo",
+          "status": "doing",
           "createdAt": "2026-03-08T13:01:03Z",
-          "updatedAt": "2026-03-08T13:01:03Z",
-          "lastUpdated": "2026-03-08T13:01:03Z"
+          "updatedAt": "2026-03-08T19:48:23Z",
+          "lastUpdated": "2026-03-08T19:48:23Z"
         },
         {
           "id": "stp_e2287a97",
