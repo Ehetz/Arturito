@@ -30,6 +30,21 @@ At each checkpoint:
 4. Log progress and blockers.
 5. If blocked, include blocker + needed input in alert.
 
+## Profile Memory Sync (new)
+
+### Continuous capture (during chats)
+- Whenever a new stable preference/fact/rule appears that belongs in `MEMORY.md`, `USER.md`, or `IDENTITY.md`, add a **pending** entry to:
+  - `memory/profile-sync-log.md`
+
+### Daily consolidation (once per day)
+- Review `memory/profile-sync-log.md`
+- Summarize and apply relevant pending entries to:
+  - `MEMORY.md`
+  - `USER.md`
+  - `IDENTITY.md`
+- Mark processed entries as `applied`
+- Record summary in `memory/heartbeat-log.md`
+
 ## Logging
 Use: `memory/heartbeat-log.md`
 
