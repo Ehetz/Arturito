@@ -240,49 +240,49 @@
       "description": "Protect pipeline state with snapshots and recovery commands.",
       "importance": 1,
       "critical": false,
-      "status": "completed",
+      "status": "active",
       "tags": [],
       "createdAt": "2026-03-08T13:01:03Z",
-      "updatedAt": "2026-03-08T15:19:02Z",
-      "lastUpdated": "2026-03-08T15:19:02Z",
-      "currentStep": "stp_d55266d9",
+      "updatedAt": "2026-03-08T13:01:03Z",
+      "lastUpdated": "2026-03-08T13:01:03Z",
+      "currentStep": "stp_6ff9251b",
       "blockedReason": "",
       "steps": [
         {
           "id": "stp_6ff9251b",
           "title": "Create daily snapshot file strategy",
           "description": "",
-          "status": "done",
+          "status": "todo",
           "createdAt": "2026-03-08T13:01:03Z",
-          "updatedAt": "2026-03-08T15:19:02Z",
-          "lastUpdated": "2026-03-08T15:19:02Z"
+          "updatedAt": "2026-03-08T13:01:03Z",
+          "lastUpdated": "2026-03-08T13:01:03Z"
         },
         {
           "id": "stp_b6e73f1d",
           "title": "Add CLI command to export backup",
           "description": "",
-          "status": "done",
+          "status": "todo",
           "createdAt": "2026-03-08T13:01:03Z",
-          "updatedAt": "2026-03-08T15:19:02Z",
-          "lastUpdated": "2026-03-08T15:19:02Z"
+          "updatedAt": "2026-03-08T13:01:03Z",
+          "lastUpdated": "2026-03-08T13:01:03Z"
         },
         {
           "id": "stp_c6d1c1ea",
           "title": "Add CLI command to restore backup safely",
           "description": "",
-          "status": "done",
+          "status": "todo",
           "createdAt": "2026-03-08T13:01:03Z",
-          "updatedAt": "2026-03-08T15:19:02Z",
-          "lastUpdated": "2026-03-08T15:19:02Z"
+          "updatedAt": "2026-03-08T13:01:03Z",
+          "lastUpdated": "2026-03-08T13:01:03Z"
         },
         {
           "id": "stp_d55266d9",
           "title": "Document rollback procedure",
           "description": "",
-          "status": "done",
+          "status": "todo",
           "createdAt": "2026-03-08T13:01:03Z",
-          "updatedAt": "2026-03-08T15:19:02Z",
-          "lastUpdated": "2026-03-08T15:19:02Z"
+          "updatedAt": "2026-03-08T13:01:03Z",
+          "lastUpdated": "2026-03-08T13:01:03Z"
         }
       ]
     },

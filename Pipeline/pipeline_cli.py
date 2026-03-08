@@ -5,6 +5,8 @@ import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 
+BACKUP_DIR = Path(__file__).resolve().parent / "backups"
+
 DATA_FILE = Path(__file__).resolve().parent / "pipeline.json"
 
 PROJECT_STATUSES = {"active", "paused", "blocked", "completed", "maintenance"}
@@ -206,6 +208,40 @@ def cmd_next(_args):
     print(json.dumps(project, indent=2, ensure_ascii=False))
 
 
+def cmd_backup_export(args):
+    data = load_data()
+    BACKUP_DIR.mkdir(parents=True, exist_ok=True)
+    stamp = now_iso().replace(":", "-")
+    out = Path(args.out) if args.out else BACKUP_DIR / f"pipeline-backup-{stamp}.json"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    with out.open("w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2, ensure_ascii=False)
+        f.write("\n")
+    print(str(out))
+
+
+def cmd_backup_restore(args):
+    src = Path(args.file)
+    if not src.exists():
+        raise SystemExit("backup file not found")
+
+    # Safety snapshot before restore.
+    BACKUP_DIR.mkdir(parents=True, exist_ok=True)
+    safety = BACKUP_DIR / f"pipeline-pre-restore-{now_iso().replace(':', '-')}.json"
+    with safety.open("w", encoding="utf-8") as f:
+        json.dump(load_data(), f, indent=2, ensure_ascii=False)
+        f.write("\n")
+
+    with src.open("r", encoding="utf-8") as f:
+        restored = json.load(f)
+
+    if not isinstance(restored, dict) or "projects" not in restored:
+        raise SystemExit("invalid backup format")
+
+    save_data(restored)
+    print(f"restored={src} safety_snapshot={safety}")
+
+
 def build_parser():
     parser = argparse.ArgumentParser(description="Pipeline manager")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -249,6 +285,14 @@ def build_parser():
 
     p_next = sub.add_parser("next", help="Show next project by priority rules")
     p_next.set_defaults(func=cmd_next)
+
+    p_backup_export = sub.add_parser("backup-export", help="Export full pipeline backup JSON")
+    p_backup_export.add_argument("--out", help="Optional output path")
+    p_backup_export.set_defaults(func=cmd_backup_export)
+
+    p_backup_restore = sub.add_parser("backup-restore", help="Restore pipeline from backup JSON")
+    p_backup_restore.add_argument("--file", required=True, help="Backup file path")
+    p_backup_restore.set_defaults(func=cmd_backup_restore)
 
     return parser
 
