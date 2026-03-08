@@ -12,15 +12,19 @@ Use heartbeat polls as an execution loop for maintenance, upgrades, system healt
 
 ## Required Checks
 
-### 1) Daily: updates + system/tool health
-Frequency: **once per day**
+### 1) Twice daily: full review + memory update
+Frequency: **2 times per day at 00:00 and 12:00 (Europe/Berlin)**
 
 Tasks:
 1. Check for updates (OpenClaw + tools + packages/libraries in active projects).
 2. Apply available safe updates.
 3. Run system health checks.
 4. Verify tool status and confirm core workflows are working without issues.
-5. Write results to log (what was checked, what changed, success/failures, next action).
+5. Review everything completed since the last checkpoint.
+6. Update memory files with relevant continuity notes:
+   - `memory/YYYY-MM-DD.md` (session-level facts)
+   - `MEMORY.md` (durable long-term items only)
+7. Write results to log (what was checked, what changed, success/failures, next action).
 
 ### 2) Weekly: OpenClaw docs review
 Frequency: **3 times per week**
