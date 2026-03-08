@@ -191,9 +191,9 @@
       "status": "active",
       "tags": [],
       "createdAt": "2026-03-08T13:01:03Z",
-      "updatedAt": "2026-03-08T19:48:23Z",
-      "lastUpdated": "2026-03-08T19:48:23Z",
-      "currentStep": "stp_88518b5f",
+      "updatedAt": "2026-03-08T20:19:49Z",
+      "lastUpdated": "2026-03-08T20:19:49Z",
+      "currentStep": "stp_e2287a97",
       "blockedReason": "",
       "steps": [
         {
@@ -209,19 +209,19 @@
           "id": "stp_88518b5f",
           "title": "Log all create/update actions (project/step)",
           "description": "",
-          "status": "doing",
+          "status": "done",
           "createdAt": "2026-03-08T13:01:03Z",
-          "updatedAt": "2026-03-08T19:48:23Z",
-          "lastUpdated": "2026-03-08T19:48:23Z"
+          "updatedAt": "2026-03-08T20:19:49Z",
+          "lastUpdated": "2026-03-08T20:19:49Z"
         },
         {
           "id": "stp_e2287a97",
           "title": "Add view endpoint /activity in API",
           "description": "",
-          "status": "todo",
+          "status": "doing",
           "createdAt": "2026-03-08T13:01:03Z",
-          "updatedAt": "2026-03-08T13:01:03Z",
-          "lastUpdated": "2026-03-08T13:01:03Z"
+          "updatedAt": "2026-03-08T20:19:49Z",
+          "lastUpdated": "2026-03-08T20:19:49Z"
         },
         {
           "id": "stp_087eebab",

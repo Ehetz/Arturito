@@ -6,6 +6,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 BACKUP_DIR = Path(__file__).resolve().parent / "backups"
+ACTIVITY_LOG = Path(__file__).resolve().parent / "activity_log.md"
 
 DATA_FILE = Path(__file__).resolve().parent / "pipeline.json"
 
@@ -46,6 +47,21 @@ def sort_key(project):
     )
 
 
+def append_activity(event, project_id=None, step_id=None, actor="assistant", details=None):
+    ts = now_iso()
+    details_text = json.dumps(details, ensure_ascii=False) if isinstance(details, (dict, list)) else str(details or "")
+    ACTIVITY_LOG.parent.mkdir(parents=True, exist_ok=True)
+    if not ACTIVITY_LOG.exists():
+        ACTIVITY_LOG.write_text("# activity_log.md\n\n", encoding="utf-8")
+    with ACTIVITY_LOG.open("a", encoding="utf-8") as f:
+        f.write(f"- timestamp: {ts}\n")
+        f.write(f"  event: {event}\n")
+        f.write(f"  projectId: {project_id or ''}\n")
+        f.write(f"  stepId: {step_id or ''}\n")
+        f.write(f"  actor: {actor}\n")
+        f.write(f"  details: {details_text}\n")
+
+
 def cmd_add_project(args):
     data = load_data()
     if args.importance < 1 or args.importance > 5:
@@ -69,6 +85,7 @@ def cmd_add_project(args):
     }
     data["projects"].append(project)
     save_data(data)
+    append_activity("project_created", project_id=project["id"], details={"name": project["name"], "importance": project["importance"]})
     print(project["id"])
 
 
@@ -117,6 +134,7 @@ def cmd_add_step(args):
     project["updatedAt"] = ts
     project["lastUpdated"] = ts
     save_data(data)
+    append_activity("step_created", project_id=project["id"], step_id=step["id"], details={"title": step["title"]})
     print(step["id"])
 
 
@@ -157,6 +175,13 @@ def cmd_set_project(args):
         project["updatedAt"] = ts
         project["lastUpdated"] = ts
         save_data(data)
+        append_activity("project_updated", project_id=project["id"], details={
+            "importance": project.get("importance"),
+            "status": project.get("status"),
+            "critical": project.get("critical"),
+            "currentStep": project.get("currentStep"),
+            "blockedReason": project.get("blockedReason"),
+        })
         print("updated")
     else:
         print("no changes")
@@ -190,6 +215,7 @@ def cmd_set_step(args):
         project["currentStep"] = step["id"]
 
     save_data(data)
+    append_activity("step_updated", project_id=project["id"], step_id=step["id"], details={"status": step["status"], "currentStep": project.get("currentStep")})
     print("updated")
 
 
@@ -217,6 +243,7 @@ def cmd_backup_export(args):
     with out.open("w", encoding="utf-8") as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
         f.write("\n")
+    append_activity("backup_export", details={"out": str(out)})
     print(str(out))
 
 
@@ -239,6 +266,7 @@ def cmd_backup_restore(args):
         raise SystemExit("invalid backup format")
 
     save_data(restored)
+    append_activity("backup_restore", details={"source": str(src), "safetySnapshot": str(safety)})
     print(f"restored={src} safety_snapshot={safety}")
 
 
