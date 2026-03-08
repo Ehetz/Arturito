@@ -285,6 +285,58 @@
           "lastUpdated": "2026-03-08T13:01:03Z"
         }
       ]
+    },
+    {
+      "id": "prj_85352179",
+      "name": "Second Agent Enablement",
+      "description": "Define and operationalize a worker agent for parallel execution.",
+      "importance": 1,
+      "critical": false,
+      "status": "active",
+      "tags": [],
+      "createdAt": "2026-03-08T13:42:52Z",
+      "updatedAt": "2026-03-08T13:43:07Z",
+      "lastUpdated": "2026-03-08T13:43:07Z",
+      "currentStep": "stp_7317fec5",
+      "blockedReason": "Persistent sub-agent sessions require thread support in current channel. Use one-shot subagents here; enable thread-capable channel for persistent worker.",
+      "steps": [
+        {
+          "id": "stp_25f181a4",
+          "title": "Create worker agent role definition and operating rules",
+          "description": "",
+          "status": "done",
+          "createdAt": "2026-03-08T13:42:57Z",
+          "updatedAt": "2026-03-08T13:43:07Z",
+          "lastUpdated": "2026-03-08T13:43:07Z"
+        },
+        {
+          "id": "stp_f99bf1b9",
+          "title": "Define handoff/report templates for delegation",
+          "description": "",
+          "status": "done",
+          "createdAt": "2026-03-08T13:42:57Z",
+          "updatedAt": "2026-03-08T13:43:07Z",
+          "lastUpdated": "2026-03-08T13:43:07Z"
+        },
+        {
+          "id": "stp_680dd242",
+          "title": "Test sub-agent runtime constraints in current channel",
+          "description": "",
+          "status": "done",
+          "createdAt": "2026-03-08T13:42:57Z",
+          "updatedAt": "2026-03-08T13:43:07Z",
+          "lastUpdated": "2026-03-08T13:43:07Z"
+        },
+        {
+          "id": "stp_7317fec5",
+          "title": "Document activation path for channels that support persistent worker sessions",
+          "description": "",
+          "status": "doing",
+          "createdAt": "2026-03-08T13:42:57Z",
+          "updatedAt": "2026-03-08T13:43:07Z",
+          "lastUpdated": "2026-03-08T13:43:07Z"
+        }
+      ]
     }
   ]
 }
