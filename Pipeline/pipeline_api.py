@@ -4,9 +4,10 @@ import uuid
 from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from urllib.parse import urlparse
+from urllib.parse import urlparse, parse_qs
 
 DATA_FILE = Path(__file__).resolve().parent / "pipeline.json"
+ACTIVITY_LOG = Path(__file__).resolve().parent / "activity_log.md"
 
 PROJECT_STATUSES = {"active", "paused", "blocked", "completed", "maintenance"}
 STEP_STATUSES = {"todo", "doing", "done", "blocked"}
@@ -62,6 +63,15 @@ def find_project(data, project_id):
     return None
 
 
+def read_activity(limit=50):
+    if not ACTIVITY_LOG.exists():
+        return []
+    lines = ACTIVITY_LOG.read_text(encoding="utf-8").splitlines()
+    # Keep only record lines, drop markdown headers/blank lines.
+    lines = [ln for ln in lines if ln.strip().startswith("-") or ln.strip().startswith("event:") or ln.strip().startswith("projectId:") or ln.strip().startswith("stepId:") or ln.strip().startswith("actor:") or ln.strip().startswith("details:")]
+    return lines[-max(1, min(limit, 500)):]
+
+
 class PipelineAPI(BaseHTTPRequestHandler):
     def do_OPTIONS(self):
         self.send_response(204)
@@ -96,6 +106,14 @@ class PipelineAPI(BaseHTTPRequestHandler):
             if not candidates:
                 return json_response(self, 200, {"project": None})
             return json_response(self, 200, {"project": sorted(candidates, key=sort_key)[0]})
+
+        if path == "/activity":
+            qs = parse_qs(parsed.query or "")
+            try:
+                limit = int((qs.get("limit") or ["50"])[0])
+            except ValueError:
+                limit = 50
+            return json_response(self, 200, {"lines": read_activity(limit)})
 
         return json_response(self, 404, {"error": "not found"})
 

@@ -188,12 +188,12 @@
       "description": "Record project and step changes for accountability and debugging.",
       "importance": 3,
       "critical": false,
-      "status": "active",
+      "status": "completed",
       "tags": [],
       "createdAt": "2026-03-08T13:01:03Z",
-      "updatedAt": "2026-03-08T20:19:49Z",
-      "lastUpdated": "2026-03-08T20:19:49Z",
-      "currentStep": "stp_e2287a97",
+      "updatedAt": "2026-03-08T20:49:07Z",
+      "lastUpdated": "2026-03-08T20:49:07Z",
+      "currentStep": "stp_087eebab",
       "blockedReason": "",
       "steps": [
         {
@@ -218,19 +218,19 @@
           "id": "stp_e2287a97",
           "title": "Add view endpoint /activity in API",
           "description": "",
-          "status": "doing",
+          "status": "done",
           "createdAt": "2026-03-08T13:01:03Z",
-          "updatedAt": "2026-03-08T20:19:49Z",
-          "lastUpdated": "2026-03-08T20:19:49Z"
+          "updatedAt": "2026-03-08T20:49:07Z",
+          "lastUpdated": "2026-03-08T20:49:07Z"
         },
         {
           "id": "stp_087eebab",
           "title": "Add activity panel in web UI",
           "description": "",
-          "status": "todo",
+          "status": "done",
           "createdAt": "2026-03-08T13:01:03Z",
-          "updatedAt": "2026-03-08T13:01:03Z",
-          "lastUpdated": "2026-03-08T13:01:03Z"
+          "updatedAt": "2026-03-08T20:49:07Z",
+          "lastUpdated": "2026-03-08T20:49:07Z"
         }
       ]
     },

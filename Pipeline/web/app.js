@@ -7,12 +7,21 @@ const createProjectForm = document.getElementById('createProjectForm');
 const addStepForm = document.getElementById('addStepForm');
 const filterForm = document.getElementById('filterForm');
 const quickActionForm = document.getElementById('quickActionForm');
+const activityPanel = document.getElementById('activityPanel');
 
 let projects = [];
 let selectedId = null;
 
 function esc(s) {
   return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+
+async function fetchActivity() {
+  const res = await fetch(`${API_BASE}/activity?limit=40`);
+  if (!res.ok) throw new Error('Failed to load activity');
+  const data = await res.json();
+  const lines = data.lines || [];
+  activityPanel.textContent = lines.length ? lines.join('\n') : 'No activity yet.';
 }
 
 async function fetchProjects() {
@@ -24,6 +33,7 @@ async function fetchProjects() {
   if (selectedId && !projects.find(p => p.id === selectedId)) selectedId = projects[0]?.id || null;
   renderProjects();
   renderDetails();
+  await fetchActivity();
 }
 
 function getFilteredProjects() {

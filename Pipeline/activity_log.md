@@ -26,3 +26,21 @@ Append-only operational history for Pipeline project/step changes.
   stepId: stp_e2287a97
   actor: assistant
   details: {"status": "doing", "currentStep": "stp_e2287a97"}
+- timestamp: 2026-03-08T20:49:07Z
+  event: step_updated
+  projectId: prj_21bbab21
+  stepId: stp_e2287a97
+  actor: assistant
+  details: {"status": "done", "currentStep": "stp_e2287a97"}
+- timestamp: 2026-03-08T20:49:07Z
+  event: step_updated
+  projectId: prj_21bbab21
+  stepId: stp_087eebab
+  actor: assistant
+  details: {"status": "done", "currentStep": "stp_087eebab"}
+- timestamp: 2026-03-08T20:49:07Z
+  event: project_updated
+  projectId: prj_21bbab21
+  stepId: 
+  actor: assistant
+  details: {"importance": 3, "status": "completed", "critical": false, "currentStep": "stp_087eebab", "blockedReason": ""}
