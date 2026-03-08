@@ -84,11 +84,11 @@
       "description": "Use heartbeat to check stalled blocked tasks and critical project inactivity.",
       "importance": 1,
       "critical": false,
-      "status": "active",
+      "status": "completed",
       "tags": [],
       "createdAt": "2026-03-08T13:01:02Z",
-      "updatedAt": "2026-03-08T14:18:42Z",
-      "lastUpdated": "2026-03-08T14:18:42Z",
+      "updatedAt": "2026-03-08T14:48:15Z",
+      "lastUpdated": "2026-03-08T14:48:15Z",
       "currentStep": "stp_e16a1144",
       "blockedReason": "",
       "steps": [
@@ -123,10 +123,10 @@
           "id": "stp_e16a1144",
           "title": "Emit compact alert format with urgency",
           "description": "",
-          "status": "doing",
+          "status": "done",
           "createdAt": "2026-03-08T13:01:02Z",
-          "updatedAt": "2026-03-08T14:18:42Z",
-          "lastUpdated": "2026-03-08T14:18:42Z"
+          "updatedAt": "2026-03-08T14:48:15Z",
+          "lastUpdated": "2026-03-08T14:48:15Z"
         }
       ]
     },
