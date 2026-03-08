@@ -1,34 +1,65 @@
 # HEARTBEAT.md
 
 ## Purpose
-Use heartbeat polls for proactive, low-noise operational checks.
+Use heartbeat polls as an execution loop for maintenance, upgrades, system health, and Pipeline progress.
 
-## Rules
-- Keep checks lightweight.
-- Alert only when there is clear action value.
+## Global Rules
+- Be proactive and execution-first.
+- If a safe update is available, apply it.
+- If an update is risky/breaking/unclear, alert with recommendation before applying.
+- Always write an operational log entry after each heartbeat run.
 - If nothing needs attention, reply exactly: `HEARTBEAT_OK`
-- Quiet hours: do not send non-urgent alerts between 23:00–08:00 (Europe/Berlin).
 
-## Checks (run in this order)
-1. **Priority inbox scan**
-   - Look for urgent client/stakeholder emails.
-   - Alert only for items requiring action within 24h.
-2. **Calendar horizon**
-   - Check next 48h for meetings, deadlines, conflicts.
-   - Alert for events starting in <2h or conflicts.
-3. **Critical ops signals**
-   - Surface failures/blockers from active project workflows.
-   - Alert only on incidents, broken promises, or delivery risk.
-4. **Daily execution hygiene**
-   - Ensure tasks/notes worth keeping are written to memory files.
+## Required Checks
 
-## Alert format (when needed)
-Use this compact structure:
+### 1) Daily: updates + system/tool health
+Frequency: **once per day**
+
+Tasks:
+1. Check for updates (OpenClaw + tools + packages/libraries in active projects).
+2. Apply available safe updates.
+3. Run system health checks.
+4. Verify tool status and confirm core workflows are working without issues.
+5. Write results to log (what was checked, what changed, success/failures, next action).
+
+### 2) Weekly: OpenClaw docs review
+Frequency: **3 times per week**
+
+Tasks:
+1. Review `https://docs.openclaw.ai` for relevant new features, implementation patterns, and upgrade opportunities.
+2. Produce concise recommendations prioritized by impact and effort.
+3. If low-risk/high-value, proceed with implementation.
+4. Log findings and actions.
+
+### 3) Hourly: Pipeline execution
+Frequency: **every 1 hour**
+
+Tasks:
+1. Read Pipeline state (priority order: critical first, then importance 1→5, then oldest).
+2. Continue work on the top actionable project.
+3. Update step status/progress in Pipeline.
+4. Log what advanced and what is blocked.
+5. If blocked, include blocker + required input in alert.
+
+## Logging
+Use file: `memory/heartbeat-log.md`
+
+For each run append:
+- timestamp (UTC)
+- checks executed
+- updates found/applied
+- system/tool health result
+- pipeline progress
+- blockers/risks
+- next action
+
+## Alert Format (only when needed)
 - **What happened**
 - **Why it matters**
+- **Action taken**
 - **Recommended next action**
 - **Urgency** (low/medium/high)
 
 ## No-action condition
-If no important update is found, respond only with:
+If nothing actionable is found, reply only with:
 HEARTBEAT_OK
