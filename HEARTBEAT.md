@@ -1,52 +1,37 @@
 # HEARTBEAT.md
 
 ## Purpose
-Use heartbeat polls as an execution loop for maintenance, upgrades, system health, and Pipeline progress.
+Run structured heartbeat checks for updates, health, docs improvements, and Pipeline execution continuity.
 
-## Global Rules
-- Be proactive and execution-first.
-- If a safe update is available, apply it.
-- If an update is risky/breaking/unclear, alert with recommendation before applying.
-- Always write an operational log entry after each heartbeat run.
-- If nothing needs attention, reply exactly: `HEARTBEAT_OK`
+## Required Schedule
 
-## Required Checks
+### 1) Twice daily checkpoint (00:00 and 12:00 Europe/Berlin)
+At each checkpoint:
+1. Check updates (OpenClaw, tools, packages/libraries in active projects).
+2. Apply safe updates.
+3. Check system health.
+4. Check tool status and verify core workflows work without issues.
+5. Review what was completed since last checkpoint.
+6. Update memory:
+   - `memory/YYYY-MM-DD.md`
+   - `MEMORY.md` (only durable long-term items)
+7. Append run results to log.
 
-### 1) Twice daily: full review + memory update
-Frequency: **2 times per day at 00:00 and 12:00 (Europe/Berlin)**
+### 2) Docs review 3 times per week
+1. Review `https://docs.openclaw.ai` for implementation/upgrade opportunities.
+2. Recommend high-impact items.
+3. Implement low-risk, high-value improvements.
+4. Log findings/actions.
 
-Tasks:
-1. Check for updates (OpenClaw + tools + packages/libraries in active projects).
-2. Apply available safe updates.
-3. Run system health checks.
-4. Verify tool status and confirm core workflows are working without issues.
-5. Review everything completed since the last checkpoint.
-6. Update memory files with relevant continuity notes:
-   - `memory/YYYY-MM-DD.md` (session-level facts)
-   - `MEMORY.md` (durable long-term items only)
-7. Write results to log (what was checked, what changed, success/failures, next action).
-
-### 2) Weekly: OpenClaw docs review
-Frequency: **3 times per week**
-
-Tasks:
-1. Review `https://docs.openclaw.ai` for relevant new features, implementation patterns, and upgrade opportunities.
-2. Produce concise recommendations prioritized by impact and effort.
-3. If low-risk/high-value, proceed with implementation.
-4. Log findings and actions.
-
-### 3) Hourly: Pipeline execution
-Frequency: **every 1 hour**
-
-Tasks:
-1. Read Pipeline state (priority order: critical first, then importance 1→5, then oldest).
+### 3) Pipeline execution every 1 hour
+1. Read Pipeline in priority order: critical first, then importance 1→5, then oldest.
 2. Continue work on the top actionable project.
 3. Update step status/progress in Pipeline.
-4. Log what advanced and what is blocked.
-5. If blocked, include blocker + required input in alert.
+4. Log progress and blockers.
+5. If blocked, include blocker + needed input in alert.
 
 ## Logging
-Use file: `memory/heartbeat-log.md`
+Use: `memory/heartbeat-log.md`
 
 For each run append:
 - timestamp (UTC)
@@ -57,13 +42,6 @@ For each run append:
 - blockers/risks
 - next action
 
-## Alert Format (only when needed)
-- **What happened**
-- **Why it matters**
-- **Action taken**
-- **Recommended next action**
-- **Urgency** (low/medium/high)
-
-## No-action condition
-If nothing actionable is found, reply only with:
+## No-action response
+If nothing needs attention, reply exactly:
 HEARTBEAT_OK
