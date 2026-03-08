@@ -52,11 +52,34 @@ python3 pipeline_cli.py next
 - if there is an `active` critical project with no progress, alert user
 - otherwise: `HEARTBEAT_OK`
 
+## API (new)
+A lightweight local API is now included in `pipeline_api.py`.
+
+Run:
+```bash
+python3 pipeline_api.py
+```
+
+Default address: `http://127.0.0.1:8787`
+
+Endpoints:
+- `GET /health`
+- `GET /projects`
+- `GET /projects/<project_id>`
+- `GET /next`
+- `POST /projects`
+- `POST /projects/<project_id>/steps`
+- `PATCH /projects/<project_id>`
+- `PATCH /projects/<project_id>/steps/<step_id>`
+
+This gives a clean backend path for the future web app (project list + click for detail).
+
 ## Roadmap
-1. File backend (current)
-2. Local API layer (`/projects`, `/next`, `/steps`)
+1. File backend + CLI (done)
+2. Local API layer (done)
 3. Web frontend (project list + detail view)
 4. GitHub sync (issues/projects mapping)
+5. Heartbeat integration (read pipeline + alert on blockers)
 
 ## For other OpenClaw assistants
 This repository is intentionally simple so any assistant can adopt it quickly.
