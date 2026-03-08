@@ -35,9 +35,9 @@
       "status": "active",
       "tags": [],
       "createdAt": "2026-03-08T13:01:02Z",
-      "updatedAt": "2026-03-08T16:18:45Z",
-      "lastUpdated": "2026-03-08T16:18:45Z",
-      "currentStep": "stp_a7701bdd",
+      "updatedAt": "2026-03-08T16:48:48Z",
+      "lastUpdated": "2026-03-08T16:48:48Z",
+      "currentStep": "stp_07ee6e8b",
       "blockedReason": "",
       "steps": [
         {
@@ -53,19 +53,19 @@
           "id": "stp_a7701bdd",
           "title": "Add add-step form in project details",
           "description": "",
-          "status": "doing",
+          "status": "done",
           "createdAt": "2026-03-08T13:01:02Z",
-          "updatedAt": "2026-03-08T16:18:45Z",
-          "lastUpdated": "2026-03-08T16:18:45Z"
+          "updatedAt": "2026-03-08T16:48:48Z",
+          "lastUpdated": "2026-03-08T16:48:48Z"
         },
         {
           "id": "stp_07ee6e8b",
           "title": "Add filters by status/importance/critical",
           "description": "",
-          "status": "todo",
+          "status": "doing",
           "createdAt": "2026-03-08T13:01:02Z",
-          "updatedAt": "2026-03-08T13:01:02Z",
-          "lastUpdated": "2026-03-08T13:01:02Z"
+          "updatedAt": "2026-03-08T16:48:48Z",
+          "lastUpdated": "2026-03-08T16:48:48Z"
         },
         {
           "id": "stp_845a2213",

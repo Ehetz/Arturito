@@ -4,6 +4,7 @@ const projectListEl = document.getElementById('projectList');
 const detailsEl = document.getElementById('details');
 const refreshBtn = document.getElementById('refreshBtn');
 const createProjectForm = document.getElementById('createProjectForm');
+const addStepForm = document.getElementById('addStepForm');
 
 let projects = [];
 let selectedId = null;
@@ -48,9 +49,12 @@ function renderProjects() {
 function renderDetails() {
   const p = projects.find((x) => x.id === selectedId);
   if (!p) {
+    addStepForm.style.display = 'none';
     detailsEl.innerHTML = '<p class="meta">Select a project.</p>';
     return;
   }
+
+  addStepForm.style.display = 'grid';
 
   const steps = (p.steps || []).map((s) => `
     <div class="step">
@@ -96,6 +100,31 @@ createProjectForm.addEventListener('submit', async (e) => {
     return;
   }
   createProjectForm.reset();
+  await fetchProjects();
+});
+
+addStepForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  if (!selectedId) return;
+
+  const form = new FormData(addStepForm);
+  const payload = {
+    title: String(form.get('title') || '').trim(),
+    description: String(form.get('description') || '').trim(),
+  };
+  if (!payload.title) return;
+
+  const res = await fetch(`${API_BASE}/projects/${selectedId}/steps`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const msg = await res.text();
+    alert(`Add step failed: ${msg}`);
+    return;
+  }
+  addStepForm.reset();
   await fetchProjects();
 });
 
