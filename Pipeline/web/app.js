@@ -6,6 +6,7 @@ const refreshBtn = document.getElementById('refreshBtn');
 const createProjectForm = document.getElementById('createProjectForm');
 const addStepForm = document.getElementById('addStepForm');
 const filterForm = document.getElementById('filterForm');
+const quickActionForm = document.getElementById('quickActionForm');
 
 let projects = [];
 let selectedId = null;
@@ -62,15 +63,30 @@ function renderProjects() {
   });
 }
 
+function populateQuickActions(project) {
+  const stepSelect = quickActionForm.querySelector('select[name="currentStep"]');
+  const statusSelect = quickActionForm.querySelector('select[name="status"]');
+  const criticalCheckbox = quickActionForm.querySelector('input[name="critical"]');
+
+  stepSelect.innerHTML = '<option value="">(no change)</option>' +
+    (project.steps || []).map((s) => `<option value="${s.id}">${esc(s.title)} (${esc(s.status)})</option>`).join('');
+  stepSelect.value = project.currentStep || '';
+  statusSelect.value = '';
+  criticalCheckbox.checked = !!project.critical;
+}
+
 function renderDetails() {
   const p = projects.find((x) => x.id === selectedId);
   if (!p) {
     addStepForm.style.display = 'none';
+    quickActionForm.style.display = 'none';
     detailsEl.innerHTML = '<p class="meta">Select a project.</p>';
     return;
   }
 
   addStepForm.style.display = 'grid';
+  quickActionForm.style.display = 'grid';
+  populateQuickActions(p);
 
   const steps = (p.steps || []).map((s) => `
     <div class="step">
@@ -146,6 +162,33 @@ addStepForm.addEventListener('submit', async (e) => {
     return;
   }
   addStepForm.reset();
+  await fetchProjects();
+});
+
+quickActionForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  if (!selectedId) return;
+
+  const form = new FormData(quickActionForm);
+  const status = String(form.get('status') || '').trim();
+  const currentStep = String(form.get('currentStep') || '').trim();
+  const critical = form.get('critical') === 'on';
+
+  const payload = { critical };
+  if (status) payload.status = status;
+  if (currentStep) payload.currentStep = currentStep;
+
+  const res = await fetch(`${API_BASE}/projects/${selectedId}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const msg = await res.text();
+    alert(`Quick action failed: ${msg}`);
+    return;
+  }
+
   await fetchProjects();
 });
 

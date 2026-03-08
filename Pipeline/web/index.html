@@ -69,6 +69,28 @@
           <button type="submit">Add step</button>
         </form>
         <div id="details">Select a project.</div>
+        <form id="quickActionForm" class="panel" style="display:none; margin-top:12px;">
+          <h3>Quick actions</h3>
+          <label><input type="checkbox" name="critical" /> Mark as critical</label>
+          <label>
+            Set project status
+            <select name="status">
+              <option value="">(no change)</option>
+              <option value="active">active</option>
+              <option value="paused">paused</option>
+              <option value="blocked">blocked</option>
+              <option value="completed">completed</option>
+              <option value="maintenance">maintenance</option>
+            </select>
+          </label>
+          <label>
+            Set current step
+            <select name="currentStep">
+              <option value="">(no change)</option>
+            </select>
+          </label>
+          <button type="submit">Apply actions</button>
+        </form>
       </section>
     </main>
 
