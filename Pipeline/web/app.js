@@ -3,6 +3,7 @@ const API_BASE = 'http://127.0.0.1:8787';
 const projectListEl = document.getElementById('projectList');
 const detailsEl = document.getElementById('details');
 const refreshBtn = document.getElementById('refreshBtn');
+const createProjectForm = document.getElementById('createProjectForm');
 
 let projects = [];
 let selectedId = null;
@@ -73,6 +74,30 @@ function renderDetails() {
 }
 
 refreshBtn.addEventListener('click', fetchProjects);
+
+createProjectForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const form = new FormData(createProjectForm);
+  const payload = {
+    name: String(form.get('name') || '').trim(),
+    description: String(form.get('description') || '').trim(),
+    importance: Number(form.get('importance') || 3),
+  };
+  if (!payload.name) return;
+
+  const res = await fetch(`${API_BASE}/projects`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const msg = await res.text();
+    alert(`Create project failed: ${msg}`);
+    return;
+  }
+  createProjectForm.reset();
+  await fetchProjects();
+});
 
 fetchProjects().catch((err) => {
   detailsEl.innerHTML = `<pre>${esc(err.message)}\n\nMake sure Pipeline API is running on ${API_BASE}</pre>`;

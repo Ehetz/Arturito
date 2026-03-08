@@ -35,28 +35,28 @@
       "status": "active",
       "tags": [],
       "createdAt": "2026-03-08T13:01:02Z",
-      "updatedAt": "2026-03-08T13:01:02Z",
-      "lastUpdated": "2026-03-08T13:01:02Z",
-      "currentStep": "stp_a6e006b8",
+      "updatedAt": "2026-03-08T16:18:45Z",
+      "lastUpdated": "2026-03-08T16:18:45Z",
+      "currentStep": "stp_a7701bdd",
       "blockedReason": "",
       "steps": [
         {
           "id": "stp_a6e006b8",
           "title": "Add create-project form in UI",
           "description": "",
-          "status": "todo",
+          "status": "done",
           "createdAt": "2026-03-08T13:01:02Z",
-          "updatedAt": "2026-03-08T13:01:02Z",
-          "lastUpdated": "2026-03-08T13:01:02Z"
+          "updatedAt": "2026-03-08T16:18:45Z",
+          "lastUpdated": "2026-03-08T16:18:45Z"
         },
         {
           "id": "stp_a7701bdd",
           "title": "Add add-step form in project details",
           "description": "",
-          "status": "todo",
+          "status": "doing",
           "createdAt": "2026-03-08T13:01:02Z",
-          "updatedAt": "2026-03-08T13:01:02Z",
-          "lastUpdated": "2026-03-08T13:01:02Z"
+          "updatedAt": "2026-03-08T16:18:45Z",
+          "lastUpdated": "2026-03-08T16:18:45Z"
         },
         {
           "id": "stp_07ee6e8b",

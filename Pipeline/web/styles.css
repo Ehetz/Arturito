@@ -6,6 +6,10 @@ button { background: #2563eb; color: white; border: 0; padding: 8px 12px; border
 main { display: grid; grid-template-columns: 360px 1fr; min-height: calc(100vh - 62px); }
 aside, section { padding: 16px; }
 aside { border-right: 1px solid #1f2937; background: #0f172a; }
+.panel { display: grid; gap: 8px; margin-bottom: 12px; padding: 10px; border: 1px solid #1f2937; border-radius: 10px; background: #111827; }
+.panel h3 { margin: 0; font-size: 14px; }
+.panel input, .panel textarea, .panel select { width: 100%; background: #0b1220; color: #e5e7eb; border: 1px solid #374151; border-radius: 8px; padding: 8px; }
+.panel textarea { min-height: 60px; resize: vertical; }
 #projectList { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
 .card { padding: 10px; border: 1px solid #1f2937; border-radius: 10px; background: #111827; cursor: pointer; }
 .card.active { border-color: #3b82f6; }
