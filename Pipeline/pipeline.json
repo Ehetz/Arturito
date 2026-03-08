@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "projects": [
+    {
+      "id": "prj_361efab5",
+      "name": "Pipeline Backend V1",
+      "description": "Core data model and CLI",
+      "importance": 1,
+      "critical": false,
+      "status": "active",
+      "tags": [],
+      "createdAt": "2026-03-08T12:32:56Z",
+      "updatedAt": "2026-03-08T12:32:57Z",
+      "lastUpdated": "2026-03-08T12:32:57Z",
+      "currentStep": "stp_7690b101",
+      "blockedReason": "",
+      "steps": [
+        {
+          "id": "stp_7690b101",
+          "title": "Define JSON schema",
+          "description": "",
+          "status": "todo",
+          "createdAt": "2026-03-08T12:32:57Z",
+          "updatedAt": "2026-03-08T12:32:57Z",
+          "lastUpdated": "2026-03-08T12:32:57Z"
+        }
+      ]
+    }
+  ]
+}
