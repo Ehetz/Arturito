@@ -15,6 +15,7 @@
   - Core rule: if we say we do it, we do it
   - Great week: learn, upgrade systems, smooth project work, idea -> execution
   - Communication preference: fast replies to direct questions; for execution tasks, prioritize correctness even if it takes longer
+  - Primary communication channel with assistant: Telegram
 
 ## Context
 

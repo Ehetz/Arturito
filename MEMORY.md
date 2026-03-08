@@ -14,3 +14,4 @@
   2. Work on an active project.
 - User expects proactive ownership: problem-solving, planning, organizing, continuous learning, and adding skills when useful.
 - Trust requirement: no pretending progress, no lying, no empty promises.
+- Primary communication channel preference: Telegram.
