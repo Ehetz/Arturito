@@ -136,12 +136,12 @@
       "description": "Map Pipeline projects to GitHub issues/milestones for execution traceability.",
       "importance": 2,
       "critical": false,
-      "status": "active",
+      "status": "completed",
       "tags": [],
       "createdAt": "2026-03-08T13:01:03Z",
-      "updatedAt": "2026-03-08T18:48:49Z",
-      "lastUpdated": "2026-03-08T18:48:49Z",
-      "currentStep": "stp_2d00392e",
+      "updatedAt": "2026-03-08T19:19:02Z",
+      "lastUpdated": "2026-03-08T19:19:02Z",
+      "currentStep": "stp_91cf2895",
       "blockedReason": "",
       "steps": [
         {
@@ -166,19 +166,19 @@
           "id": "stp_2d00392e",
           "title": "Implement push sync from pipeline status to GitHub comments",
           "description": "",
-          "status": "doing",
+          "status": "done",
           "createdAt": "2026-03-08T13:01:03Z",
-          "updatedAt": "2026-03-08T18:48:49Z",
-          "lastUpdated": "2026-03-08T18:48:49Z"
+          "updatedAt": "2026-03-08T19:19:02Z",
+          "lastUpdated": "2026-03-08T19:19:02Z"
         },
         {
           "id": "stp_91cf2895",
           "title": "Add conflict resolution strategy",
           "description": "",
-          "status": "todo",
+          "status": "done",
           "createdAt": "2026-03-08T13:01:03Z",
-          "updatedAt": "2026-03-08T13:01:03Z",
-          "lastUpdated": "2026-03-08T13:01:03Z"
+          "updatedAt": "2026-03-08T19:19:02Z",
+          "lastUpdated": "2026-03-08T19:19:02Z"
         }
       ]
     },
