@@ -5,25 +5,21 @@ Run structured heartbeat checks for updates, health, docs improvements, and Pipe
 
 ## Required Schedule
 
-### 1) Twice daily checkpoint (00:00 and 12:00 Europe/Berlin)
-At each checkpoint:
+### 1) Weekly Update Check (Monday 08:00 Europe/Berlin)
 1. Check updates (OpenClaw, tools, packages/libraries in active projects).
 2. Apply safe updates.
 3. Check system health.
-4. Check tool status and verify core workflows work without issues.
-5. Review what was completed since last checkpoint.
-6. Update memory:
+4. Review `https://docs.openclaw.ai` for implementation/upgrade opportunities.
+
+### 2) Daily checkpoint (08:00 Europe/Berlin)
+1. Check tool status and verify core workflows work without issues.
+2. Review what was completed since last checkpoint.
+3. Update memory:
    - `memory/YYYY-MM-DD.md`
    - `MEMORY.md` (only durable long-term items)
-7. Append run results to log.
+4. Append run results to log.
 
-### 2) Docs review 3 times per week
-1. Review `https://docs.openclaw.ai` for implementation/upgrade opportunities.
-2. Recommend high-impact items.
-3. Implement low-risk, high-value improvements.
-4. Log findings/actions.
-
-### 3) Pipeline execution every 1 hour
+### 3) Pipeline execution (every 4 hours)
 1. Read Pipeline in priority order: critical first, then importance 1→5, then oldest.
 2. Continue work on the top actionable project.
 3. Update step status/progress in Pipeline.
