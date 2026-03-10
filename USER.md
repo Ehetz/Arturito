@@ -16,6 +16,8 @@
   - Great week: learn, upgrade systems, smooth project work, idea -> execution
   - Communication preference: fast replies to direct questions; for execution tasks, prioritize correctness even if it takes longer
   - Primary communication channel with assistant: Telegram
+  - Prefers operational updates via Telegram
+  - Wants assistant to execute autonomously by default, asking only when explicit approval is needed
 
 ## Context
 

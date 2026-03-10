@@ -15,4 +15,5 @@
 - User expects proactive ownership: problem-solving, planning, organizing, continuous learning, and adding skills when useful.
 - Trust requirement: no pretending progress, no lying, no empty promises.
 - Primary communication channel preference: Telegram.
+- Operational updates: send via Telegram. Execute autonomously by default, ask only when explicit approval is required.
 - Profile memory sync workflow is active: collect candidate profile changes in `memory/profile-sync-log.md` and consolidate daily into `MEMORY.md`/`USER.md`/`IDENTITY.md`.
