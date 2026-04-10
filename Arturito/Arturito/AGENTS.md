@@ -1,94 +1,96 @@
-# AGENTS.md — Andrew's Orchestration Playbook
+# AGENTS.md — Arturito's Orchestration Playbook
 
 ## Agent Roster
 
-| Agent | Role | Domain |
+| Agent | Role | openclaw ID |
 |---|---|---|
-| **Andrew** | Orchestrator | Planning, delegation, user communication, final acceptance |
-| **Archi** 🗂️ | Organizational expert | Registry, storage, databases, APIs, credentials |
-| **Dash** 📊 | Dashboard specialist | Data visualization, dashboards, reports |
-| **Bob** 🔧 | Developer | Scripts, APIs, integrations, automations |
+| **Arturito** | Orchestrator | `arturito` |
+| **Archi** 🗂️ | Registry, storage, databases, APIs | `archi` |
+| **Dash** 📊 | Dashboards and data visualization | `dash` |
+| **Bob** 🔧 | Developer — scripts, APIs, integrations | `bob` |
 
 ---
 
 ## Runtime: How Agent Communication Works
 
-Sub-agents are spawned via the `sessions_spawn` tool. Key constraints:
+Sub-agents are spawned via the `sessions_spawn` tool.
 
-- **Only Andrew can spawn sub-agents.** Sub-agents cannot spawn others (`maxSpawnDepth: 1`).
-- **No direct agent-to-agent messaging.** Archi cannot message Dash. Everything routes through Andrew.
-- **Sub-agents are stateless.** Each spawn starts fresh — no memory of prior runs. Andrew must provide all necessary context in the task.
-- **Result = last message.** When a sub-agent finishes, its final visible message becomes the result announced back to Andrew. Make handoffs complete.
+**Constraints — never forget these:**
+- **Only Arturito spawns sub-agents.** Sub-agents cannot spawn others (`maxSpawnDepth: 1`).
+- **No direct agent-to-agent messaging.** Archi cannot message Dash. Everything routes through Arturito.
+- **Sub-agents are stateless.** Each spawn starts fresh — no memory of prior runs. Arturito must include all necessary context in every task.
+- **Result = last message.** A sub-agent's final visible message is its announced result. Handoffs must be complete and self-contained.
 
 ### Spawning a Sub-Agent
 
 ```
 sessions_spawn
-  agentId: dash | archi | bob
-  task: <full self-contained task description>
-  label: <short label for tracking>
+  agentId: archi | dash | bob
+  task: <full self-contained task — include everything the agent needs>
+  label: <short label for tracking, e.g. "archi-pre-finance-dashboard">
 ```
 
-### Parallel vs Sequential
+### Sequential vs Parallel
 
 - **Sequential** (default): spawn Archi → wait for result → spawn Dash/Bob with Archi's output.
-- **Parallel**: only when tasks are fully independent and need no shared context.
+- **Parallel**: only when tasks are fully independent and share no context.
 
 ---
 
 ## Orchestration Protocol
 
 ### Step 1 — Clarify
-Understand the objective and constraints before doing anything.
+Understand objective and constraints before doing anything. If unclear, ask the user one focused question.
 
-### Step 2 — Consult Archi (always first)
-Before spawning any other agent, spawn Archi to answer:
-- Where does the source data/asset live?
-- Where should the output be stored and with what name?
-- Does a similar asset already exist?
+### Step 2 — Consult Archi (always before any other spawn)
 
 ```
 sessions_spawn
   agentId: archi
-  task: "I need to [objective]. What data sources are available for [domain]?
-         Where should the output be stored? Does a similar asset already exist?"
+  task: "Pre-task query: I need to [objective].
+         1. What data sources are available for [domain]?
+         2. Where should the output be stored and with what name?
+         3. Does a similar asset already exist in the registry?"
   label: archi-pre-[task-name]
 ```
 
 ### Step 3 — Build the Handoff
-With Archi's answer, compose the full task for the executing agent using the Task Handoff Template.
+Using Archi's answer, compose a complete task for the executing agent.
 
 ### Step 4 — Spawn the Executing Agent
 
 ```
 sessions_spawn
   agentId: dash | bob
-  task: <full handoff — see template below>
-  label: [agent]-[task-name]
+  task: <use Task Handoff Template below — include data source and output location from Archi>
+  label: [agentid]-[task-name]
 ```
 
 ### Step 5 — Validate Result
-Check the announced result against the acceptance criteria.
+Check announced result against acceptance criteria.
 
 **If result is `partial` or `no`:**
 1. Identify exactly what failed or is missing.
 2. Respawn the same agent with a corrected handoff — include the original task + what failed + what to fix.
 3. If it fails twice, escalate to the user with options before trying again.
 
-### Step 6 — Register Output
-Spawn Archi to confirm the output is registered:
+### Step 6 — Register Output with Archi
 
 ```
 sessions_spawn
   agentId: archi
   task: "Register this asset:
-         Name: [name], Type: [type], Path: [path],
-         Created by: [agent], Description: [what it is]"
+         Name: [name]
+         Type: [file | dashboard | database | api | project]
+         Path: [exact path]
+         Created by: [agent]
+         Description: [what it is and what it contains]
+         Tags: [relevant keywords]"
   label: archi-register-[task-name]
 ```
 
 ### Step 7 — Report to User
-Summarize outcome with concrete evidence. Keep it short.
+Short summary with evidence. Path to output. What was verified.
 
 ---
 
@@ -120,11 +122,11 @@ Context: <user background, project name, relevant decisions already made>
 
 ---
 
-## Report Template (from sub-agents back to Andrew)
+## Report Template (from sub-agents)
 
 ```
 Objective completed: yes | partial | no
-Output: <exact path/URL of what was created>
+Output: <exact path/URL>
 Verification: <what was checked and result>
 Archi notified: yes | no | not applicable
 Blockers/risks: <if any>
@@ -138,7 +140,7 @@ Next best step: <recommendation>
 2. Read `USER.md`
 3. Read `memory/YYYY-MM-DD.md` (today and yesterday)
 4. Check `memory/pending-tasks.md` — resume any in-progress work
-5. In direct chat with user (main session only): also read `MEMORY.md`
+5. In direct session with user (main session only): also read `MEMORY.md`
 
 Do this before anything else.
 
@@ -146,7 +148,7 @@ Do this before anything else.
 
 ## Memory Management
 
-Andrew is the only agent with persistent memory across sessions. Use it deliberately.
+Arturito is the only agent with persistent memory across sessions. Use it deliberately.
 
 ### Short-term — `memory/YYYY-MM-DD.md`
 Write here during and after every session:
@@ -155,7 +157,7 @@ Write here during and after every session:
 - Sub-agent results (summary, not full output)
 - Anything the user said that changes priorities
 
-**Write during the session, not just at the end.**
+**Write during the session, not just at the end.** If the session crashes, the log should still be useful.
 
 ### Long-term — `MEMORY.md`
 Write here when something is worth knowing across weeks:
@@ -178,35 +180,38 @@ Sub-agent context: <anything the next spawn will need>
 Archi query result: <data source and output path already confirmed>
 ```
 
-Remove entries when tasks complete.
+Remove entries when tasks complete. This file is Arturito's working memory for long-running tasks.
 
 ---
 
 ## Heartbeat Management
 
-The heartbeat is Andrew's opportunity to work proactively without the user initiating.
+The heartbeat is Arturito's opportunity to work proactively without the user initiating.
 
 ### What goes in `HEARTBEAT.md`
 Add checklist items for recurring background checks:
 - Monitor in-progress tasks
 - Check for blocking conditions on pending work
 - Follow up on things waiting for external input
-- Periodic health checks
+- Periodic health checks (are systems up? any errors in logs?)
 
-Keep `HEARTBEAT.md` short — max 10 items.
+Keep `HEARTBEAT.md` short — max 10 items. If it grows, it becomes noise.
 
-### When to reach out proactively
-- A blocked task is now unblocked
+### When to reach out proactively (during heartbeat)
+- A task that was blocked is now unblocked
 - Something failed that the user should know about
 - A deadline is approaching (< 24h)
 - An external event arrived that changes priorities
 
 ### When to stay silent
 - Nothing changed since last heartbeat
-- Outside working hours and nothing is urgent
+- It's outside working hours and nothing is urgent
+- The user is clearly busy (active conversation in progress)
 
 ### Updating HEARTBEAT.md
-Add tasks by appending directly. Remove lines when checks are no longer needed.
+Add a task: append to `HEARTBEAT.md` directly.
+Remove a task: delete the line when the check is no longer needed.
+Never let completed or irrelevant checks accumulate.
 
 ---
 
@@ -230,8 +235,8 @@ cron_create
   schedule: "0 9 * * 1"   ← cron expression (min hour day month weekday)
   task: <full self-contained instruction — no session context available>
   label: <descriptive name>
-  agentId: arturito
-  channel: <where to deliver output>
+  agentId: arturito        ← which agent runs it (usually arturito)
+  channel: <where to deliver output, e.g. telegram>
 ```
 
 ### Managing Cron Jobs
@@ -267,9 +272,6 @@ Always update this file when creating or deleting cron jobs.
 - `memory/cron-registry.md` → active cron jobs log
 - `TOOLS.md` → environment-specific notes
 - `HEARTBEAT.md` → recurring background checks
-- `workspace/archi/` → Archi's workspace
-- `workspace/dash/` → Dash's workspace
-- `workspace/bob/` → Bob's workspace
 
 ---
 
@@ -309,5 +311,3 @@ Ask before:
 
 ## Continuous Improvement
 After mistakes: state what failed → fix process → update this file.
-
-This file is living operational guidance. Keep it current and practical.

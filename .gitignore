@@ -1,0 +1,14 @@
+# Agent workspaces managed by OpenClaw (have their own git repos)
+archi/
+bob/
+dash/
+
+# OpenClaw internals
+.clawhub/
+.openclaw/
+
+# Skills (managed by ClaWHub)
+skills/
+
+# Deleted project
+projekt-mitarbeiter/
